@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__="user"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
@@ -21,12 +22,14 @@ class Todos (db.Model):
     id=db.Column(db.Integer,primary_key=True)
     label=db.Column(db.String(50), nullable=False)
     done=db.Column(db.Boolean, nullable=False, default=False)
-
+    user_id=db.Column(db.Integer, db.ForeignKey("user.id"))
+    user=db.relationship(User)
     def __repr__(self):
         return '<Todos %r>' % self.id
 
     def serialize(self):
         return {
         "label":self.label,
-        "done":self.done
+        "done":self.done,
+        "user_id":self.user_id
         }

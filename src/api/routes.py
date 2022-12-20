@@ -17,8 +17,20 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@api.route('/todos', methods=['GET'])
-def get_todos():
-    todos=Todos.query.all()
-    print(todos)
-    return list(map(lambda item: item.serialize(),todos))
+@api.route('/todos/<int:user_param>', methods=['GET'])
+def get_todos(user_param):
+    todos=Todos.query.filter(Todos.user_id==user_param).all()
+    user_data=todos[0].user.serialize()
+    return jsonify({
+        "user":user_data,
+        "todos":list(map(lambda item: item.serialize(),todos))
+    }), 200
+@api.route('/todos/<int:user_param>', methods=['POST'])
+def post_todo(user_param):
+    label=request.json.get("label")
+    done=request.json.get("done")
+    newTodo=Todos(user_id=user_param, label=label, done=done)
+    db.session.add(newTodo)
+    db.session.commit()
+    
+    return jsonify({"resp":"Todo creado con exito"}), 201
