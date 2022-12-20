@@ -21,3 +21,12 @@ class Todos (db.Model):
     id=db.Column(db.Integer,primary_key=True)
     label=db.Column(db.String(50), nullable=False)
     done=db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return '<Todos %r>' % self.id
+
+    def serialize(self):
+        return {
+        "label":self.label,
+        "done":self.done
+        }
