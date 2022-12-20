@@ -34,3 +34,23 @@ def post_todo(user_param):
     db.session.commit()
     
     return jsonify({"resp":"Todo creado con exito"}), 201
+
+@api.route('/todos/<int:user_param>/<int:todo_index>', methods=['PUT'])
+def update_todo(user_param, todo_index):
+    label=request.json.get("label")
+    done=request.json.get("done")
+    todos=Todos.query.filter(Todos.user_id==user_param).all()
+    newTodo=todos[todo_index]
+    newTodo.label=label
+    newTodo.done=done
+    db.session.add(newTodo)
+    db.session.commit()
+    return jsonify({"resp":"Todo Actualizado "}), 200
+
+@api.route('/todos/<int:user_param>/<int:todo_index>', methods=['DELETE'])
+def delete_todo(user_param,todo_index):
+    todos=Todos.query.filter(Todos.user_id==user_param).all()
+    todo_delete=todos[todo_index]
+    db.session.delete(todo_delete)
+    db.session.commit()
+    return jsonify({"resp":"Todo Eliminado "}), 200
